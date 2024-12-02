@@ -11,9 +11,10 @@ public class Country {
     double nationaldebt; //in billion
     double gdppercapita;
 
-    Country(int id, String name, long population, double area, double nationaldebt, double gdppercapita){
+    Country(int id, String name, String officialname, long population, double area, double nationaldebt, double gdppercapita){
         this.id = id;
         this.name = name;
+        this.officialname = officialname;
         this.population = population;
         this.area = area;
         this.nationaldebt = nationaldebt;
