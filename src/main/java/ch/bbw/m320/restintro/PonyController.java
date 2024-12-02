@@ -13,19 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * just a smallish controller to outline basic concepts
- */
 @CrossOrigin
 @RestController
-@RequestMapping("/api/ponies")
+@RequestMapping("/api/country")
 public class PonyController {
 
-	private final List<PonyDto> list = new ArrayList<>();
+	private final List<Country> list = new ArrayList<>();
 
 	public PonyController() {
 		// we fill the "database" with initial data.
-		list.add(new PonyDto("Thunder", "Isabell"));
+		list.add(new Country(1, "USA", 4800000,  30000, 30008834, 20000 ));
 	}
 
 	@GetMapping
