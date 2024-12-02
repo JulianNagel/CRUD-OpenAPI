@@ -2,6 +2,7 @@ package ch.bbw.m320.restintro;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -44,8 +45,22 @@ public class CountryController {
 
     @PostMapping("/update/{id}")
     public ResponseEntity<String> updateCountry(@RequestBody Country newCountry, @PathVariable int id) {
-        list.get(id).name = newCountry.name;
+        int index = IntStream.range(0, list.size())
+                .filter(i -> list.get(i).id == id)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Country not found: " + id));
+        list.set(index, newCountry);
         return ResponseEntity.status(HttpStatus.CREATED).header("Update", "Bar").body("totally worked");
+    }
+
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<String> deleteCountry(@PathVariable int id) {
+        int index = IntStream.range(0, list.size())
+                .filter(i -> list.get(i).id == id)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Country not found: " + id));
+        list.remove(index);
+        return ResponseEntity.status(HttpStatus.CREATED).header("Delete", "Bar").body("totally worked");
     }
 
     @PostMapping
