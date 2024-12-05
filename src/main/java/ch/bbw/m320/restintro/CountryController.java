@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static java.util.Arrays.stream;
-
 @CrossOrigin
 @RestController
 @RequestMapping("/api/country")
@@ -18,8 +16,8 @@ public class CountryController {
     private final List<Country> list = new ArrayList<>();
 
     public CountryController() {
-        // we fill the "database" with initial data.
         list.add(new Country(1, "USA", "United States of America", 4800000, 30000, 30008834, 20000));
+        list.add(new Country(2, "Germany", "Repuplic of Germany", 4800000, 30000, 30008834, 20000));
     }
 
     @GetMapping("/list")
@@ -27,10 +25,10 @@ public class CountryController {
         return list;
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/{id}")
     public Country getCountryWithID(@PathVariable int id) {
         return list.stream()
-                .filter(country -> country.id == id)
+                .filter(country -> country.getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Country not found: " + id));
     }
@@ -38,34 +36,40 @@ public class CountryController {
     @GetMapping("/name/{name}")
     public Country getCountryWithName(@PathVariable String name) {
         return list.stream()
-                .filter(country -> name.equals(country.name))
+                .filter(country -> name.equals(country.getName()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Country not found: " + name));
     }
 
-    @PostMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateCountry(@RequestBody Country newCountry, @PathVariable int id) {
         int index = IntStream.range(0, list.size())
-                .filter(i -> list.get(i).id == id)
+                .filter(i -> list.get(i).getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Country not found: " + id));
         list.set(index, newCountry);
-        return ResponseEntity.status(HttpStatus.CREATED).header("Update", "Bar").body("totally worked");
+        return ResponseEntity.ok("Update successful");
     }
 
-    @PostMapping("/delete/{id}")
-    public ResponseEntity<String> deleteCountry(@PathVariable int id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCountry(@PathVariable int id) {
         int index = IntStream.range(0, list.size())
-                .filter(i -> list.get(i).id == id)
+                .filter(i -> list.get(i).getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Country not found: " + id));
         list.remove(index);
-        return ResponseEntity.status(HttpStatus.CREATED).header("Delete", "Bar").body("totally worked");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PostMapping
     public ResponseEntity<String> newCountry(@RequestBody Country newCountry) {
         list.add(newCountry);
-        return ResponseEntity.status(HttpStatus.CREATED).header("Create", "Bar").body("totally worked");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Country created successfully");
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleNotFound(IllegalArgumentException e) {
+        return e.getMessage();
     }
 }
