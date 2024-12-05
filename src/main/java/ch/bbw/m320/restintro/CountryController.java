@@ -17,7 +17,7 @@ public class CountryController {
 
     public CountryController() {
         list.add(new Country(1, "USA", "United States of America", 4800000, 30000, 30008834, 20000));
-        list.add(new Country(2, "Germany", "Repuplic of Germany", 4800000, 30000, 30008834, 20000));
+        list.add(new Country(2, "Germany", "Repuplic of Germany", 400000, 30000, 30008834, 20000));
     }
 
     @GetMapping("/list")

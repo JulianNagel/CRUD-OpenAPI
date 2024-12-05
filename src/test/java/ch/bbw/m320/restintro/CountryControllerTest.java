@@ -53,6 +53,35 @@ class CountryControllerTest {
         mockMvc.perform(delete("/api/country/1"))
                 .andExpect(status().isNoContent());
     }
+    @Test
+    void shouldReturnCountryById() throws Exception {
+        mockMvc.perform(get("/api/country/2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("Germany Updated"))
+                .andExpect(jsonPath("$.officialName").value("Repuplic of Germany"));
+    }
+
+    @Test
+    void shouldReturnCountryByName() throws Exception {
+        mockMvc.perform(get("/api/country/name/Germany Updated"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(2))
+                .andExpect(jsonPath("$.officialName").value("Repuplic of Germany"));
+    }
+
+    @Test
+    void shouldReturnNotFoundForInvalidId() throws Exception {
+        mockMvc.perform(get("/api/country/999"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Country not found: 999"));
+    }
+
+    @Test
+    void shouldReturnNotFoundForInvalidName() throws Exception {
+        mockMvc.perform(get("/api/country/name/InvalidName"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Country not found: InvalidName"));
+    }
 }
 
 
