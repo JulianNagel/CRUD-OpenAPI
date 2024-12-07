@@ -47,18 +47,21 @@ public class CountryController {
                 .filter(i -> list.get(i).getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Country not found: " + id));
+        // careful: who guaranteed that newCountry.id is now the same as id?
         list.set(index, newCountry);
         return ResponseEntity.ok("Update successful");
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCountry(@PathVariable int id) {
+    public void deleteCountry(@PathVariable int id) {
+        // alternatively list.removeIf(...)
         int index = IntStream.range(0, list.size())
                 .filter(i -> list.get(i).getId() == id)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Country not found: " + id));
         list.remove(index);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        // only resort back to ResponseEntity for very complicated responses.
     }
 
     @PostMapping
@@ -71,5 +74,14 @@ public class CountryController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFound(IllegalArgumentException e) {
         return e.getMessage();
+    }
+
+    // or a safer alternative to an IllegalArgumentException handler, since every code somewhere deep down the
+    // stack could throw an IllegalArgumentException as well...
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    static final class CountryNotFoundException extends RuntimeException {
+        CountryNotFoundException(String message) {
+            super(message);
+        }
     }
 }

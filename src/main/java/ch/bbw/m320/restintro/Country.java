@@ -1,5 +1,6 @@
 package ch.bbw.m320.restintro;
 
+// so much boilerplate code: should be converted to a record (or use Lombock)
 public class Country {
     private int id;
     private String name;
